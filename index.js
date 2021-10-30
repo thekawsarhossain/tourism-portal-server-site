@@ -1,8 +1,10 @@
 const { MongoClient } = require("mongodb");
 const express = require('express');
 const cors = require('cors');
+const ObjectId = require('mongodb').ObjectId;
 const app = express();
 const port = process.env.PORT || 5000;
+require('dotenv').config();
 
 // using middlewere here 
 app.use(cors());
@@ -21,13 +23,26 @@ async function run() {
         const dataCollection = database.collection('packages');
 
         // get api here 
+        app.get('/packages', async (req, res) => {
+            const cursor = dataCollection.find({});
+            const result = await cursor.toArray();
+            res.json(result);
+        });
+
+        // get single data here 
+        app.get('/package/:id', async (req, res) => {
+            const query = { _id: ObjectId(req.params.id) }
+            const package = await dataCollection.findOne(query);
+            res.json(package);
+        })
 
     }
     finally {
-        await client.close();
+        // await client.close();
     }
 
 }
+run().catch(console.dir)
 
 
 // port listening here 
