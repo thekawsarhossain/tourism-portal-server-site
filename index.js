@@ -63,6 +63,12 @@ async function run() {
             res.json(order)
         });
 
+        // get loggedin user api
+        app.get('/myOrders/:email', async (req, res) => {
+            const result = await orderCollection.find({ email: req.params.email }).toArray();
+            res.json(result);
+        })
+
         // delete api 
         app.delete('/order/:id', async (req, res) => {
             const query = { _id: ObjectId(req.params.id) }
