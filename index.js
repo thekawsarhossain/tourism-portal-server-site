@@ -20,20 +20,54 @@ async function run() {
     try {
         await client.connect();
         const database = client.db('tourism-network');
-        const dataCollection = database.collection('packages');
+        const packageCollection = database.collection('packages');
+        const orderCollection = database.collection('orders');
 
         // get api here 
         app.get('/packages', async (req, res) => {
-            const cursor = dataCollection.find({});
+            const cursor = packageCollection.find({});
             const result = await cursor.toArray();
             res.json(result);
         });
 
+        // packages post api here 
+        app.post('/packages', async (req, res) => {
+            const result = await packageCollection.insertOne(req.body);
+            res.json(result);
+        })
+
         // get single data here 
         app.get('/package/:id', async (req, res) => {
             const query = { _id: ObjectId(req.params.id) }
-            const package = await dataCollection.findOne(query);
+            const package = await packageCollection.findOne(query);
             res.json(package);
+        })
+
+        //post api here 
+        app.post('/orders', async (req, res) => {
+            const result = await orderCollection.insertOne(req.body);
+            res.json(result);
+        })
+
+        // orders get api
+        app.get('/orders', async (req, res) => {
+            const cursor = orderCollection.find({});
+            const result = await cursor.toArray();
+            res.json(result);
+        })
+
+        // get single order api 
+        app.get('/orders/:id', async (req, res) => {
+            const query = { _id: ObjectId(req.params.id) }
+            const order = await orderCollection.findOne(query);
+            res.json(order)
+        });
+
+        // delete api 
+        app.delete('/order/:id', async (req, res) => {
+            const query = { _id: ObjectId(req.params.id) }
+            const result = await orderCollection.deleteOne(query);
+            res.json(result);
         })
 
     }
