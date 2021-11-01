@@ -63,6 +63,20 @@ async function run() {
             res.json(order)
         });
 
+        // update status here 
+        app.put('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const option = { upsert: true };
+            const updateStatus = {
+                $set: {
+                    status: 'approved',
+                },
+            };
+            const result = await orderCollection.updateOne(filter, updateStatus, option)
+            res.json(result)
+        });
+
         // get loggedin user api
         app.get('/myOrders/:email', async (req, res) => {
             const result = await orderCollection.find({ email: req.params.email }).toArray();
